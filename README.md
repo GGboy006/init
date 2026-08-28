@@ -7,6 +7,7 @@
 | 本命批盘 | `.agents/skills/nihaixia-zwds/SKILL.md` | `/nihaixia-zwds` |
 | 大限流年 | `.agents/skills/nihaixia-zwds-liunian/SKILL.md` | `/nihaixia-zwds-liunian` |
 | 化解（阳宅） | `.agents/skills/nihaixia-yangzhai/SKILL.md` | `/nihaixia-yangzhai` |
+| 实盘归档 | `.agents/skills/nihaixia-anli/SKILL.md` | `/nihaixia-anli` |
 
 Cursor / Claude Code 入口各有一份同名目录：`.cursor/skills/`、`.claude/skills/`。改的时候改 `.agents/skills/` 里那一份，再同步过去。
 
@@ -23,3 +24,5 @@ Cursor / Claude Code 入口各有一份同名目录：`.cursor/skills/`、`.clau
 ## 分工
 
 对话里丢命盘截图走紫微本命：只认图，不排盘、不调接口、不写代码。没有图就让人把盘截来。问今年、这两年、大限走流年。丢户型、谁住哪、厨厕门、搬家改运走阳宅。可以连用：先看见管道，再改位置。
+
+一盘看完走归档，存进 `cases/`。三样东西分开放：批法规则进 `SKILL.md`，这一盘的果进 `cases/` 案例文件，跨盘反复应验的断法进 `cases/验证账.md`。当次批词不进 `SKILL.md`。
