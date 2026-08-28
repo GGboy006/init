@@ -1,5 +1,5 @@
 ---
-name: ziwei-doushu-master
+name: nihaixia-zwds
 description: >-
   紫微斗数批命、解盘、核盘、定盘。用户丢来生辰或命盘图时使用；也用于紫微/紫薇斗数、
   事业感情财运、格局、四化、大限流年。讲法蒸馏自倪海厦《天纪》：开宗明义、象意、

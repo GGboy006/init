@@ -4,7 +4,7 @@
 
 | 用 | 路径 | 触发 |
 | --- | --- | --- |
-| 批盘 | `.agents/skills/ziwei-doushu-master/SKILL.md` | `/ziwei-doushu-master` |
+| 批盘 | `.agents/skills/nihaixia-zwds/SKILL.md` | `/nihaixia-zwds` |
 | 化解（阳宅） | `.agents/skills/nihaixia-yangzhai/SKILL.md` | `/nihaixia-yangzhai` |
 
 Cursor / Claude Code 入口各有一份同名目录：`.cursor/skills/`、`.claude/skills/`。改的时候改 `.agents/skills/` 里那一份，再同步过去。
