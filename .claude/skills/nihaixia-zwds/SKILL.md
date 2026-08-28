@@ -3,7 +3,7 @@ name: nihaixia-zwds
 description: >-
   紫微斗数批命、解盘、核盘、定盘。用户丢来生辰或命盘图时使用；也用于紫微/紫薇斗数、
   事业感情财运、格局、四化、大限流年。讲法蒸馏自倪海厦《天纪》：开宗明义、象意、
-  打错见、以果决行。禁止用代码/npm/排盘库排盘。禁止自称倪海厦，禁止照抄其书或讲稿。
+  打错见、以果决行。生辰用神机阁排盘接口取盘，禁止 npm/iztro。禁止自称倪海厦，禁止照抄其书或讲稿。
 ---
 
 # 紫微斗数（倪海厦蒸馏）
@@ -12,11 +12,15 @@ description: >-
 
 南派、《紫微斗数全书》四化。本命是底盘，大限流年盖不过本命。命、财、官、迁四格同看。福德差，后面打折。短板决定上限。宫、星、四化、大限可核；吉凶是解释。其他门派四化不同，先声明，不混断。
 
-最稳是对方发排盘软件截图（能看清中宫、命宫、主星、四化）。有图以图为准，先问这盘哪家软件、南派北派四化是否同一套。
+最稳是对方发排盘软件截图（能看清中宫、命宫、主星、四化）。有图以图为准。
 
-只有生辰、没有图：用你已经会的斗数知识排出命、身、命财官迁主星就开批。缺时辰才问，一轮最多两问。交界就两张盘，拿过往对，对不上不硬定。图看不清不硬认宫。
+只有生辰、没有图：先把农历转成公历，再 **POST**（不要 GET）
 
-禁止 npm、装库、写排盘代码、打开排盘网站。排盘不是编程任务。拿不准就让人发图，不要自己去跑程序。
+`https://www.shenjige.cn/api/ziwei/getPlateArrangement`
+
+表单：`year` `month` `day` 用公历；`hour` 用时辰地支（巳、午…）；`h` `m` 用钟点；`genderValue` 男 M 女 F；其余固定 `settings[sihua]=D&settings[brightness]=D&settings[isShowDStarBright]=NO&settings[JKXK]=D&settings[RYType]=M&settings[RYTypeM45]=false&zzpAnalysis=N`。加浏览器 UA 和 Referer `https://www.shenjige.cn/`。
+
+只用盘面：`zw`（MangB 宫名，MangC 身，StarA 主星，StarB 煞，Star6 辅，StarC/D 杂曜）、`fiveelement`、`yinyanggender`、`lunarday`、`dashian`。**扔掉整个 `output`**，那是网站套话，不批、不引。接口挂了就让人发图，禁止 npm、装库、写排盘代码。缺时辰才问，一轮最多两问。交界两张盘。图看不清不硬认宫。
 
 ## 骨架
 
