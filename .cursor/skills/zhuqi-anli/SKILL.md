@@ -1,5 +1,5 @@
 ---
-name: nihaixia-anli
+name: zhuqi-anli
 description: >-
   实盘归档。一次解盘结束后，把这盘写进 cases/ 存成案例，并更新 cases/验证账.md。
   用户说归档、存下来、总结这盘、这次对话总结时使用。紫微本命、大限流年、阳宅都走这一份。

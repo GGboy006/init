@@ -6,11 +6,12 @@
 
 | 用 | 触发 |
 | --- | --- |
-| 本命批盘 | `/nihaixia-zwds` |
-| 大限流年 | `/nihaixia-zwds-liunian` |
-| 化解（阳宅） | `/nihaixia-yangzhai` |
-| 实盘归档 | `/nihaixia-anli` |
-| 解盘发帖 | `/nihaixia-fatie` |
+| 定盘校正 | `/zhuqi-zwds-dingpan` |
+| 本命批盘 | `/zhuqi-zwds` |
+| 大限流年 | `/zhuqi-zwds-liunian` |
+| 化解（阳宅） | `/zhuqi-yangzhai` |
+| 实盘归档 | `/zhuqi-anli` |
+| 解盘发帖 | `/zhuqi-fatie` |
 
 ## 解盘三份的共用规约
 
@@ -34,7 +35,7 @@
 
 ## 攒毛病
 
-批完发现的毛病先记在 `.cursor/skills/nihaixia-zwds/PENDING.md`，攒一批再合进 `SKILL.md`，合完清掉。
+批完发现的毛病先记在 `.cursor/skills/zhuqi-zwds/PENDING.md`，攒一批再合进 `SKILL.md`，合完清掉。
 
 每条记三样：哪次盘、犯了什么（skill 里已有哪条没挡住）、待写入的判据。「犯了什么」这一栏最有用，它分得清是新问题还是旧规则太弱。
 
