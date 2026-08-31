@@ -1,0 +1,17 @@
+id,file,title,source_url,use_when
+01-基础,01-基础.md,紫微斗数基础,https://iztro.com/learn/basis,五行局、时辰、干支合冲
+02-星盘,02-星盘.md,紫微斗数星盘,https://iztro.com/learn/astrolabe,本命/大限/流年盘结构（解盘步骤不当判准）
+03-宫位,03-宫位.md,紫微斗数宫位系统,https://iztro.com/learn/palace,十二宫、三方四正、暗合宫（包装人设不当判准）
+04-星曜系统,04-星曜系统.md,紫微斗数星曜系统,https://iztro.com/learn/star,亮度概念与亮度表
+05-主星,05-主星.md,十四主星,https://iztro.com/learn/major-star,十四主星本义与双星组合
+06-辅星,06-辅星.md,十四辅星,https://iztro.com/learn/minor-star,六吉、六煞、禄存天马
+07-杂耀神煞,07-杂耀神煞.md,三十七杂耀,https://iztro.com/learn/adj-star,杂耀神煞本义
+08-四化,08-四化.md,紫微斗数四化,https://iztro.com/learn/mutagen,四化口诀、飞化读法
+09-格局,09-格局.md,紫微斗数格局,https://iztro.com/learn/pattern,格局成格条件
+10-运限,10-运限.md,紫微斗数运限,https://iztro.com/learn/horoscope,大限流年流月
+11-安星诀,11-安星诀.md,紫微斗数安星诀,https://iztro.com/learn/setup,宫干、斗君、安星口诀
+12-古籍,12-古籍.md,紫微斗数全书,https://iztro.com/learn/ancientBook,古籍目录（赋文可核出处，不当判准）
+12-古籍-1,12-古籍-1.md,紫微斗数全书 —— 卷一,https://iztro.com/learn/ancientBook-1,全书卷一（赋文可核出处，不当判准）
+12-古籍-2,12-古籍-2.md,紫微斗数全书 —— 卷二,https://iztro.com/learn/ancientBook-2,全书卷二（赋文可核出处，不当判准）
+12-古籍-3,12-古籍-3.md,紫微斗数全书 —— 卷三,https://iztro.com/learn/ancientBook-3,全书卷三（赋文可核出处，不当判准）
+12-古籍-qa,12-古籍-qa.md,诸星问答论,https://iztro.com/learn/ancientBook-qa,诸星问答论（赋文可核出处，不当判准）
