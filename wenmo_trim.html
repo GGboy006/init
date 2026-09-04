@@ -1,0 +1,282 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>文墨天机盘裁剪</title>
+<style>
+  :root {
+    --bg: #f5f3ef;
+    --card: #ffffff;
+    --ink: #2b2620;
+    --muted: #8a8177;
+    --accent: #8a5a2b;
+    --accent-2: #3d3a34;
+    --border: #e4ddd2;
+    --good: #4a7c4f;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: -apple-system, "PingFang SC", "Microsoft YaHei", sans-serif;
+    background: var(--bg);
+    color: var(--ink);
+    padding: 28px 20px 48px;
+    min-height: 100vh;
+  }
+  header { max-width: 1080px; margin: 0 auto 20px; }
+  h1 { font-size: 20px; font-weight: 600; letter-spacing: .5px; }
+  .sub { color: var(--muted); font-size: 13px; margin-top: 6px; }
+  .toolbar {
+    max-width: 1080px; margin: 0 auto 14px;
+    display: flex; align-items: center; gap: 14px; flex-wrap: wrap;
+  }
+  .toolbar label { font-size: 14px; color: var(--muted); }
+  .toolbar input[type=number] {
+    width: 84px; padding: 7px 10px; font-size: 14px;
+    border: 1px solid var(--border); border-radius: 8px; background: #fff; color: var(--ink);
+  }
+  .stat { font-size: 13px; color: var(--muted); }
+  .stat b { color: var(--accent); font-weight: 600; }
+  .wrap {
+    max-width: 1080px; margin: 0 auto;
+    display: grid; grid-template-columns: 1fr 1fr; gap: 16px;
+  }
+  @media (max-width: 760px) { .wrap { grid-template-columns: 1fr; } }
+  .panel {
+    background: var(--card); border: 1px solid var(--border);
+    border-radius: 12px; padding: 16px; display: flex; flex-direction: column;
+  }
+  .panel .head {
+    display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;
+  }
+  .panel .head .title { font-size: 13px; font-weight: 600; color: var(--muted); letter-spacing: 1px; }
+  .btn {
+    padding: 7px 14px; font-size: 13px; border: none; border-radius: 8px;
+    cursor: pointer; background: var(--accent-2); color: #fff; transition: opacity .15s;
+  }
+  .btn:hover { opacity: .85; }
+  .btn.ghost { background: #fff; color: var(--ink); border: 1px solid var(--border); }
+  .btn:disabled { opacity: .45; cursor: not-allowed; }
+  textarea {
+    width: 100%; flex: 1; min-height: 420px; resize: vertical;
+    border: 1px dashed var(--border); border-radius: 8px; padding: 12px;
+    font-family: ui-monospace, "SF Mono", Menlo, Consolas, monospace;
+    font-size: 12.5px; line-height: 1.55; color: var(--ink); background: #fbfaf7;
+  }
+  textarea:focus { outline: none; border-color: var(--accent); }
+  .drop-hint { color: var(--muted); font-size: 12px; margin-top: 8px; line-height: 1.6; }
+  .drop-hint code { background: #efeae1; padding: 1px 6px; border-radius: 4px; }
+  .flash { color: var(--good); font-size: 12px; opacity: 0; transition: opacity .2s; }
+  .flash.show { opacity: 1; }
+</style>
+</head>
+<body>
+  <header>
+    <h1>文墨天机盘 · 裁剪</h1>
+    <div class="sub">把文墨天机「给 AI 的盘」全量数据，裁成干净的、可直接喂给 skill 的数据。纯本地，不上传。</div>
+  </header>
+
+  <div class="toolbar">
+    <label>保留大限</label>
+    <span class="stat">从</span>
+    <select id="fromSel"></select>
+    <span class="stat">到</span>
+    <select id="toSel"></select>
+    <span class="stat" id="stat"></span>
+  </div>
+
+  <div class="wrap">
+    <div class="panel">
+      <div class="head">
+        <span class="title">输入 · 全量数据</span>
+        <button class="btn ghost" id="clearIn">清空</button>
+      </div>
+      <textarea id="input" placeholder="把文墨天机导出的全量文本粘贴到这里，或直接把文件拖进来"></textarea>
+      <div class="drop-hint">
+        支持拖入 <code>.md</code> / <code>.txt</code> 文件 · 也支持直接粘贴<br>
+        裁剪规则：切掉开头提示词 → 去掉神煞杂项 → 只保留上方所选大限的流年
+      </div>
+    </div>
+
+    <div class="panel">
+      <div class="head">
+        <span class="title">输出 · 干净数据</span>
+        <div style="display:flex; gap:8px; align-items:center;">
+          <span class="flash" id="flash">已复制 ✓</span>
+          <button class="btn" id="copy">复制结果</button>
+        </div>
+      </div>
+      <textarea id="output" readonly placeholder="裁剪结果会显示在这里"></textarea>
+      <div class="drop-hint" id="outStat"></div>
+    </div>
+  </div>
+
+<script>
+(function () {
+  var $ = function (id) { return document.getElementById(id); };
+  var input = $('input'), output = $('output');
+  var fromSel = $('fromSel'), toSel = $('toSel');
+  var stat = $('stat'), outStat = $('outStat'), flash = $('flash');
+
+  var decadeBlocks = [];  // [{n, sy, ey, lines}]
+
+  function findAnchor(lines, keyword) {
+    for (var i = 0; i < lines.length; i++) if (lines[i].indexOf(keyword) !== -1) return i;
+    return -1;
+  }
+
+  function trimPalaces(lines) {
+    var out = [], inShensha = false;
+    for (var i = 0; i < lines.length; i++) {
+      var line = lines[i];
+      if (line.indexOf('├神煞') !== -1 || line.indexOf('└神煞') !== -1) { inShensha = true; continue; }
+      if (inShensha) {
+        if (line.trimStart().indexOf('│ │ │') === 0) continue;
+        inShensha = false;
+      }
+      out.push(line);
+    }
+    return out;
+  }
+
+  function parseDecadeBlocks(lines) {
+    var blocks = [], cur = null;
+    for (var i = 0; i < lines.length; i++) {
+      var line = lines[i];
+      if ((line.indexOf('├第') !== -1 || line.indexOf('└第') !== -1) && /第\d+大限\[/.test(line)) {
+        if (cur !== null) blocks.push(cur);
+        cur = [line];
+      } else if (cur !== null) {
+        cur.push(line);
+      }
+    }
+    if (cur !== null) blocks.push(cur);
+
+    return blocks.map(function (block) {
+      var n = null, sy = null, ey = null;
+      for (var j = 0; j < block.length; j++) {
+        var m1 = block[j].match(/第(\d+)大限\[/);
+        if (m1) n = parseInt(m1[1], 10);
+        var m2 = block[j].match(/起止年份:(\d+)年.*~(\d+)年/);
+        if (m2) { sy = parseInt(m2[1], 10); ey = parseInt(m2[2], 10); }
+      }
+      return { n: n, sy: sy, ey: ey, lines: block };
+    });
+  }
+
+  // 从输入文本里把大限块解析出来，供下拉框用
+  function rebuildSelectors() {
+    var src = input.value;
+    decadeBlocks = [];
+    var iFlow = findAnchor(src.split(/\r?\n/), '├大限流年信息');
+    if (iFlow === -1) return;
+    var flowLines = src.split(/\r?\n/).slice(iFlow + 1);
+    decadeBlocks = parseDecadeBlocks(flowLines);
+
+    // 填充下拉框
+    fromSel.innerHTML = ''; toSel.innerHTML = '';
+    decadeBlocks.forEach(function (b) {
+      var label = '第' + b.n + '大限' + (b.sy ? '（' + b.sy + '–' + b.ey + '）' : '');
+      var o1 = document.createElement('option'); o1.value = b.n; o1.textContent = label;
+      var o2 = document.createElement('option'); o2.value = b.n; o2.textContent = label;
+      fromSel.appendChild(o1); toSel.appendChild(o2);
+    });
+
+    if (!decadeBlocks.length) return;
+
+    // 默认定位到「当前大限 → 下一大限」
+    var year = new Date().getFullYear();
+    var curIdx = -1;
+    for (var idx = 0; idx < decadeBlocks.length; idx++) {
+      var b = decadeBlocks[idx];
+      if (b.sy !== null && b.ey !== null && b.sy <= year && year <= b.ey) { curIdx = idx; break; }
+    }
+    var fromIdx = curIdx !== -1 ? curIdx : 0;
+    var toIdx = Math.min(fromIdx + 1, decadeBlocks.length - 1);
+    fromSel.selectedIndex = fromIdx;
+    toSel.selectedIndex = toIdx;
+  }
+
+  function trim() {
+    var lines = input.value.replace(/^\uFEFF/, '').split(/\r?\n/);
+
+    var iApi = findAnchor(lines, '├API 版本');
+    if (iApi !== -1) lines = lines.slice(iApi);
+
+    var iPalace = findAnchor(lines, '├命盘十二宫');
+    var iFlow = findAnchor(lines, '├大限流年信息');
+
+    if (iPalace === -1) return input.value;
+
+    var head = lines.slice(0, iPalace);
+    var palaceLines, flowLines;
+    if (iFlow === -1) { palaceLines = lines.slice(iPalace); flowLines = []; }
+    else { palaceLines = lines.slice(iPalace, iFlow); flowLines = lines.slice(iFlow); }
+
+    var palaceOut = trimPalaces(palaceLines);
+    var flowOut = [];
+
+    if (flowLines.length) {
+      flowOut.push(flowLines[0]);
+      var fromN = parseInt(fromSel.value, 10);
+      var toN = parseInt(toSel.value, 10);
+      if (fromN > toN) { var t = fromN; fromN = toN; toN = t; }
+      decadeBlocks.forEach(function (b) {
+        if (b.n >= fromN && b.n <= toN) {
+          flowOut.push.apply(flowOut, b.lines);
+        }
+      });
+    }
+
+    return head.concat(palaceOut, flowOut).join('\n');
+  }
+
+  function run() {
+    var src = input.value;
+    if (!src.trim()) { output.value = ''; stat.textContent = ''; outStat.textContent = ''; return; }
+    rebuildSelectors();
+    var result = trim();
+    output.value = result;
+    var inLines = src.split(/\r?\n/).length;
+    var outLines = result.split(/\r?\n/).length;
+    var fromN = fromSel.value, toN = toSel.value;
+    stat.innerHTML = '输入 <b>' + inLines + '</b> 行 → 输出 <b>' + outLines + '</b> 行 · 保留第 ' + fromN + '–' + toN + ' 大限';
+    outStat.textContent = '已裁剪：' + inLines + ' 行 → ' + outLines + ' 行';
+  }
+
+  function copy() {
+    var text = output.value;
+    if (!text) return;
+    var done = function () { flash.classList.add('show'); setTimeout(function () { flash.classList.remove('show'); }, 1200); };
+    if (navigator.clipboard && navigator.clipboard.writeText) {
+      navigator.clipboard.writeText(text).then(done).catch(function () { fallbackCopy(text); done(); });
+    } else { fallbackCopy(text); done(); }
+  }
+  function fallbackCopy(text) {
+    var ta = document.createElement('textarea');
+    ta.value = text; ta.style.position = 'fixed'; ta.style.opacity = '0';
+    document.body.appendChild(ta); ta.select();
+    try { document.execCommand('copy'); } catch (e) {}
+    document.body.removeChild(ta);
+  }
+
+  input.addEventListener('input', run);
+  fromSel.addEventListener('change', function () { if (input.value.trim()) { output.value = trim(); } });
+  toSel.addEventListener('change', function () { if (input.value.trim()) { output.value = trim(); } });
+  $('copy').addEventListener('click', copy);
+  $('clearIn').addEventListener('click', function () { input.value = ''; run(); });
+
+  // 拖放文件
+  document.addEventListener('dragover', function (e) { e.preventDefault(); });
+  document.addEventListener('drop', function (e) {
+    e.preventDefault();
+    var f = e.dataTransfer.files && e.dataTransfer.files[0];
+    if (!f) return;
+    var reader = new FileReader();
+    reader.onload = function () { input.value = String(reader.result); run(); };
+    reader.readAsText(f);
+  });
+})();
+</script>
+</body>
+</html>
